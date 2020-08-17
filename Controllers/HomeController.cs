@@ -1,5 +1,6 @@
 ﻿namespace KM_Technical_Assessment.Controllers
 {
+    using KM_Technical_Assessment.Constants;
     using KM_Technical_Assessment.Models;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Caching.Memory;
@@ -29,7 +30,11 @@
         [Route("initialize")]
         public KMResponse Initialize()
         {
-            // TODO Initialize Game
+            this.memoryCache.Set(CacheKeys.GameBoard, new KMGameBoard());
+            this.memoryCache.Set(CacheKeys.CurrentPlayer, 1);
+            this.memoryCache.Set(CacheKeys.CurrentTurn, 1);
+            this.memoryCache.Set<KMPoint>(CacheKeys.PreviousNode, null);
+            this.memoryCache.Set(CacheKeys.BoardDimension, 4);
 
             return new KMResponse
             {
