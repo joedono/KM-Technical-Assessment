@@ -275,8 +275,27 @@
 
         private List<KMPoint> GetNodePath(KMPoint start, KMPoint end)
         {
-            // TODO return the nodes in between start and end. Exclude start, but include end
-            return null;
+            var path = new List<KMPoint>();
+
+            var xDirection = start.x < end.x ? 1 : -1;
+            var yDirection = start.y < end.y ? 1 : -1;
+            KMPoint addPoint;
+
+            for (var x = start.x; x < end.x; x += xDirection)
+            {
+                for (var y = start.y; y < end.y; y += yDirection)
+                {
+                    // First loop. We haven't moved on from checking the first node yet
+                    if (x == start.x || y == end.y)
+                    {
+                        continue;
+                    }
+
+                    addPoint = new KMPoint(x, y);
+                }
+            }
+
+            return path;
         }
 
         private bool CheckWinner()
