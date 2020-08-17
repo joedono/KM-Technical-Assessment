@@ -7,6 +7,7 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection.Metadata.Ecma335;
 
     [ApiController]
     public class HomeController : Controller
@@ -215,7 +216,25 @@
 
         private bool CheckWinner()
         {
-            return false;
+            var currentNodes = this.memoryCache.Get<KMGameBoard>(CacheKeys.GameBoard);
+
+            if (!currentNodes.nodes.Any())
+            {
+                // Empty board
+                return false;
+            }
+
+            // Check first and last node for available moves
+            var hasAvailableMoves = this.CheckNode(currentNodes.nodes.First(), currentNodes) ||
+                this.CheckNode(currentNodes.nodes.Last(), currentNodes);
+
+            return !hasAvailableMoves;
+        }
+
+        private bool CheckNode(KMPoint point, KMGameBoard board)
+        {
+            // TODO
+            return true;
         }
 
         #endregion
