@@ -234,8 +234,36 @@
 
         private bool CheckNode(KMPoint point, KMGameBoard board)
         {
-            // TODO
-            return true;
+            var boardDimension = this.memoryCache.Get<int>(CacheKeys.BoardDimension);
+            var enforceSize = this.memoryCache.Get<bool>(CacheKeys.EnforceSize);
+            var moveAvailable = false;
+            KMPoint checkpoint;
+
+            for (var x = point.x - 1; x <= point.x + 1; x++)
+            {
+                for (var y = point.y - 1; y <= point.y + 1; y++)
+                {
+                    // Point is off the board towards the top or left
+                    if (x < 0 || y < 0)
+                    {
+                        continue;
+                    }
+
+                    // Point is off the board towards the bottom or right
+                    if (enforceSize && (x > boardDimension || y > boardDimension))
+                    {
+                        continue;
+                    }
+
+                    checkpoint = new KMPoint(x, y);
+                    if (!board.nodes.Contains(checkpoint)) // Point is not on the path and can be drawn to
+                    {
+                        moveAvailable = true;
+                    }
+                }
+            }
+
+            return moveAvailable;
         }
 
         #endregion
