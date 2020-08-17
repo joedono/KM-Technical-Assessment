@@ -51,15 +51,27 @@
         [Route("node-clicked")]
         public KMResponse NodeClicked([FromBody] KMPoint point)
         {
-            return new KMResponse
+            // TODO Validate clicked node, add selected nodes to board, check winner
+            var valid = this.Validate(point);
+
+            if (valid != null)
             {
-                msg = "Initialize",
-                body = new KMResponseBody
-                {
-                    heading = "Player 1",
-                    message = "Awaiting Player 1's Move"
-                }
-            };
+                this.memoryCache.Set<KMPoint>(CacheKeys.PreviousNode, null);
+                return valid;
+            }
+
+            var response = this.AddNodeToBoard(point);
+
+            if (this.CheckWinner())
+            {
+                var currentPlayer = this.memoryCache.Get<int>(CacheKeys.CurrentPlayer);
+
+                response.msg = "GAME_OVER";
+                response.body.heading = "Game Over";
+                response.body.message = $"Player {currentPlayer} Wins!";
+            }
+
+            return response;
         }
 
         [HttpPost]
@@ -72,6 +84,21 @@
         #endregion
 
         #region Helpers
+
+        private KMResponse Validate(KMPoint point)
+        {
+            return null;
+        }
+
+        private KMResponse AddNodeToBoard(KMPoint point)
+        {
+            return null;
+        }
+
+        private bool CheckWinner()
+        {
+            return false;
+        }
 
         #endregion
     }
