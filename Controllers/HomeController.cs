@@ -138,7 +138,11 @@
             }
             else
             {
+                // Picking the second node. Node must be adjacent to or on a direct line from previous node
 
+                // TODO newNode is already on the path
+                // TODO A straight line cannot be drawn from previousNode to newNode
+                // TODO previousNode and newNode are more than one space apart, and an in-between node is already on the path
             }
 
             return null;
