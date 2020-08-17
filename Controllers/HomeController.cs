@@ -139,10 +139,43 @@
             else
             {
                 // Picking the second node. Node must be adjacent to or on a direct line from previous node
+                if (currentNodes.nodes.Contains(newNode))
+                {
+                    // Node picked is already on the path. Also covers if previous node is clicked twice
+                    return new KMResponse
+                    {
+                        msg = errorMsg,
+                        body = new KMResponseBody
+                        {
+                            heading = playerString,
+                            message = "Invalid move."
+                        }
+                    };
+                }
 
-                // TODO newNode is already on the path
-                // TODO A straight line cannot be drawn from previousNode to newNode
-                // TODO previousNode and newNode are more than one space apart, and an in-between node is already on the path
+                var xDifference = Math.Abs(previousNode.x - newNode.x);
+                var yDifference = Math.Abs(previousNode.y - newNode.y);
+
+                if (xDifference > 0 && yDifference > 0 && xDifference != yDifference)
+                {
+                    // A straight line cannot be drawn from prevous node to new node
+                    return new KMResponse
+                    {
+                        msg = errorMsg,
+                        body = new KMResponseBody
+                        {
+                            heading = playerString,
+                            message = "Invalid move."
+                        }
+                    };
+                }
+
+                if (xDifference > 1 || yDifference > 1)
+                {
+                    // TODO Nodes are more than one space apart
+                    // Check the in-between nodes
+                    // If they're on the path, it's an invalid move
+                }
             }
 
             return null;
