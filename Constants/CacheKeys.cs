@@ -6,8 +6,6 @@
 
         public const string CurrentPlayer = "current-player";
 
-        public const string CurrentTurn = "current-turn";
-
         public const string PreviousNode = "previous-node";
 
         public const string BoardDimension = "board-dimension";

@@ -34,7 +34,6 @@
         {
             this.memoryCache.Set(CacheKeys.GameBoard, new KMGameBoard());
             this.memoryCache.Set(CacheKeys.CurrentPlayer, 1);
-            this.memoryCache.Set(CacheKeys.CurrentTurn, 1);
             this.memoryCache.Set<KMPoint>(CacheKeys.PreviousNode, null);
             this.memoryCache.Set(CacheKeys.BoardDimension, 4);
             this.memoryCache.Set(CacheKeys.EnforceSize, false);
@@ -91,7 +90,6 @@
         {
             var currentNodes = this.memoryCache.Get<KMGameBoard>(CacheKeys.GameBoard);
             var currentPlayer = this.memoryCache.Get<int>(CacheKeys.CurrentPlayer);
-            var currentTurn = this.memoryCache.Get<int>(CacheKeys.CurrentTurn);
             var boardDimension = this.memoryCache.Get<int>(CacheKeys.BoardDimension);
             var enforceSize = this.memoryCache.Get<bool>(CacheKeys.EnforceSize);
             var previousNode = this.memoryCache.Get<KMPoint>(CacheKeys.PreviousNode);
