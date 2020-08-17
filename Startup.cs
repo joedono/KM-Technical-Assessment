@@ -19,6 +19,7 @@ namespace KM_Technical_Assessment
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
+            services.AddCors();
             services.AddControllers();
         }
 
@@ -31,6 +32,11 @@ namespace KM_Technical_Assessment
             }
 
             app.UseRouting();
+
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true));
 
             app.UseEndpoints(endpoints =>
             {
