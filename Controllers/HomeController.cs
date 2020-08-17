@@ -62,7 +62,7 @@
                 return valid;
             }
 
-            var response = this.AddNodeToBoard(point);
+            var response = this.ClickNode(point);
 
             if (this.CheckWinner())
             {
@@ -203,15 +203,80 @@
 
         #region Helpers
 
+        private KMResponse ClickNode(KMPoint clickedNode)
+        {
+            var currentNodes = this.memoryCache.Get<KMGameBoard>(CacheKeys.GameBoard);
+            var currentPlayer = this.memoryCache.Get<int>(CacheKeys.CurrentPlayer);
+            var previousNode = this.memoryCache.Get<KMPoint>(CacheKeys.PreviousNode);
+            var playerString = $"Player {currentPlayer}";
+            var nextPlayerString = $"Player {(currentPlayer == 1 ? 2 : 1)}";
+
+            if (previousNode == null)
+            {
+                // First click
+                this.memoryCache.Set(CacheKeys.PreviousNode, clickedNode);
+                return new KMResponse
+                {
+                    msg = "VALID_START_NODE",
+                    body = new KMResponseBody
+                    {
+                        heading = playerString,
+                        message = "Select a second node to complete the line."
+                    }
+                };
+            }
+            else
+            {
+                // Second Click
+                if (!currentNodes.nodes.Any())
+                {
+                    // First Move. Make sure to add the previousNode
+                    currentNodes.nodes.Add(previousNode);
+                }
+
+                // Add in-between nodes
+                var addToBeginning = previousNode.Equals(currentNodes.nodes.First());
+                var pathNodes = this.GetNodePath(previousNode, clickedNode);
+
+                for (var i = 1; i < pathNodes.Count(); i++)
+                {
+                    if (addToBeginning)
+                    {
+                        currentNodes.nodes.Insert(0, pathNodes[i]);
+                    }
+                    else
+                    {
+                        currentNodes.nodes.Add(pathNodes[i]);
+                    }
+                }
+
+                this.ChangePlayer(currentNodes, currentPlayer);
+                return new KMResponse
+                {
+                    msg = "VALID_END_NODE",
+                    body = new KMResponseBody
+                    {
+                        newLine = new
+                        {
+                            start = previousNode,
+                            end = clickedNode
+                        },
+                        heading = nextPlayerString
+                    }
+                };
+            }
+        }
+
+        private void ChangePlayer(KMGameBoard board, int currentPlayer)
+        {
+            this.memoryCache.Set(CacheKeys.GameBoard, board);
+            this.memoryCache.Set(CacheKeys.CurrentPlayer, currentPlayer == 1 ? 2 : 1);
+            this.memoryCache.Set<KMPoint>(CacheKeys.PreviousNode, null);
+        }
+
         private List<KMPoint> GetNodePath(KMPoint start, KMPoint end)
         {
             // TODO return the nodes in between start and end. Exclude start, but include end
-            return null;
-        }
-
-        private KMResponse AddNodeToBoard(KMPoint point)
-        {
-            // TODO
             return null;
         }
 
