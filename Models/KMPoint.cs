@@ -13,5 +13,26 @@
             this.x = x;
             this.y = y;
         }
+
+        public override bool Equals(object other)
+        {
+            if (other == null)
+            {
+                return false;
+            }
+
+            var that = other as KMPoint;
+            if (that == null)
+            {
+                return false;
+            }
+
+            return this.x == that.x && this.y == that.y;
+        }
+
+        public override int GetHashCode()
+        {
+            return x * 100 + y;
+        }
     }
 }
