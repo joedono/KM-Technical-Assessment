@@ -83,12 +83,16 @@
 
         #endregion
 
-        #region Helpers
+        #region Validation
 
         private KMResponse Validate(KMPoint point)
         {
             return null;
         }
+
+        #endregion
+
+        #region Helpers
 
         private KMResponse AddNodeToBoard(KMPoint point)
         {
