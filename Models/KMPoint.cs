@@ -1,5 +1,7 @@
 ﻿namespace KM_Technical_Assessment.Models
 {
+    using System;
+
     public class KMPoint
     {
         public int x { get; set; }
@@ -32,7 +34,7 @@
 
         public override int GetHashCode()
         {
-            return x * 100 + y;
+            return HashCode.Combine(x, y);
         }
     }
 }
