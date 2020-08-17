@@ -277,6 +277,7 @@
         {
             var path = new List<KMPoint>();
 
+            // TODO These directions are wrong. Figure this out.
             var xDirection = start.x < end.x ? 1 : -1;
             var yDirection = start.y < end.y ? 1 : -1;
             KMPoint addPoint;
