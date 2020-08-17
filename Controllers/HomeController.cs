@@ -5,6 +5,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Caching.Memory;
     using System;
+    using System.Collections.Generic;
     using System.Linq;
 
     [ApiController]
@@ -172,9 +173,27 @@
 
                 if (xDifference > 1 || yDifference > 1)
                 {
-                    // TODO Nodes are more than one space apart
+                    // Nodes are more than one space apart
                     // Check the in-between nodes
                     // If they're on the path, it's an invalid move
+                    var pathNodes = this.GetNodePath(previousNode, newNode);
+
+                    foreach(var pathNode in pathNodes)
+                    {
+                        if (currentNodes.nodes.Contains(pathNode))
+                        {
+                            // Line would intersect with existing path.
+                            return new KMResponse
+                            {
+                                msg = errorMsg,
+                                body = new KMResponseBody
+                                {
+                                    heading = playerString,
+                                    message = "Invalid move."
+                                }
+                            };
+                        }
+                    }
                 }
             }
 
@@ -184,6 +203,12 @@
         #endregion
 
         #region Helpers
+
+        private List<KMPoint> GetNodePath(KMPoint start, KMPoint end)
+        {
+            // TODO return the nodes in between start and end. Exclude start, but include end
+            return null;
+        }
 
         private KMResponse AddNodeToBoard(KMPoint point)
         {
