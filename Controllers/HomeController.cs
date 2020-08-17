@@ -35,6 +35,7 @@
             this.memoryCache.Set(CacheKeys.CurrentTurn, 1);
             this.memoryCache.Set<KMPoint>(CacheKeys.PreviousNode, null);
             this.memoryCache.Set(CacheKeys.BoardDimension, 4);
+            this.memoryCache.Set(CacheKeys.EnforceSize, false);
 
             return new KMResponse
             {
