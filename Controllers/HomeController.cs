@@ -5,6 +5,7 @@
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Caching.Memory;
     using System;
+    using System.Linq;
 
     [ApiController]
     public class HomeController : Controller
@@ -52,7 +53,6 @@
         [Route("node-clicked")]
         public KMResponse NodeClicked([FromBody] KMPoint point)
         {
-            // TODO Validate clicked node, add selected nodes to board, check winner
             var valid = this.Validate(point);
 
             if (valid != null)
@@ -86,8 +86,61 @@
 
         #region Validation
 
-        private KMResponse Validate(KMPoint point)
+        private KMResponse Validate(KMPoint newNode)
         {
+            var currentNodes = this.memoryCache.Get<KMGameBoard>(CacheKeys.GameBoard);
+            var currentPlayer = this.memoryCache.Get<int>(CacheKeys.CurrentPlayer);
+            var currentTurn = this.memoryCache.Get<int>(CacheKeys.CurrentTurn);
+            var boardDimension = this.memoryCache.Get<int>(CacheKeys.BoardDimension);
+            var enforceSize = this.memoryCache.Get<bool>(CacheKeys.EnforceSize);
+            var previousNode = this.memoryCache.Get<KMPoint>(CacheKeys.PreviousNode);
+            var playerString = $"Player {currentPlayer}";
+            var errorMsg = previousNode == null ? "INVALID_START_NODE" : "INVALID_END_NODE";
+
+            // Validate that the point is on the board
+            if (enforceSize && (newNode.x < 0 || newNode.y < 0 || newNode.x >= boardDimension || newNode.y >= boardDimension))
+            {
+                return new KMResponse
+                {
+                    msg = errorMsg,
+                    body = new KMResponseBody
+                    {
+                        heading = playerString,
+                        message = "Not a valid position."
+                    }
+                };
+            }
+
+            if (previousNode == null)
+            {
+                // Picking first node
+                if (currentNodes.nodes.Any())
+                {
+                    if (!newNode.Equals(currentNodes.nodes[0]) && !newNode.Equals(currentNodes.nodes[currentNodes.nodes.Count - 1]))
+                    {
+                        // New node is not the first or last node in the path
+                        return new KMResponse
+                        {
+                            msg = errorMsg,
+                            body = new KMResponseBody
+                            {
+                                heading = playerString,
+                                message = "You must start on either end of the path."
+                            }
+                        };
+                    }
+                }
+                else
+                {
+                    // First move. Always valid
+                    return null;
+                }
+            }
+            else
+            {
+
+            }
+
             return null;
         }
 
