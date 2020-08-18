@@ -10,8 +10,8 @@ It is a rather standard Web API project with a HomeController handling all the e
 ## Running the API
 The project can be run on your standard IIS Express instance that is bundled with Visual Studio. It will use the `Http` API model from the client.
 
-The project is also hosted on Heroku at https://km-technical-assessment.herokuapp.com, and can be connected to there. The barest minimum of routing is used. For instance, the call to initialize is:
+The project is also hosted on Heroku at https://km-technical-assessment.herokuapp.com, and can be connected to there. The barest minimum of routing is used. For instance, the call to initialize is:   
     https://km-technical-assessment.herokuapp.com/initialize
 
-And the call for `/node-clicked` is simply:
+And the call for `/node-clicked` is simply:   
     https://km-technical-assessment.herokuapp.com/node-clicked
