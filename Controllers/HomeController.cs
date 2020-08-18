@@ -237,15 +237,15 @@
                 var addToBeginning = previousNode.Equals(currentNodes.nodes.First());
                 var pathNodes = this.GetNodePath(previousNode, clickedNode);
 
-                for (var i = 1; i < pathNodes.Count(); i++)
+                foreach (var pathNode in pathNodes)
                 {
                     if (addToBeginning)
                     {
-                        currentNodes.nodes.Insert(0, pathNodes[i]);
+                        currentNodes.nodes.Insert(0, pathNode);
                     }
                     else
                     {
-                        currentNodes.nodes.Add(pathNodes[i]);
+                        currentNodes.nodes.Add(pathNode);
                     }
                 }
 
@@ -288,7 +288,7 @@
             var xCheck = start.x + xDirection;
             var yCheck = start.y + yDirection;
 
-            while(xCheck != end.x && yCheck != end.y)
+            while(xCheck != end.x || yCheck != end.y)
             {
                 path.Add(new KMPoint(xCheck, yCheck));
                 xCheck += xDirection;
@@ -335,7 +335,7 @@
                     }
 
                     // Point is off the board towards the bottom or right
-                    if (enforceSize && (x > boardDimension || y > boardDimension))
+                    if (enforceSize && (x >= boardDimension || y >= boardDimension))
                     {
                         continue;
                     }
