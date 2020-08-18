@@ -36,7 +36,7 @@
             this.memoryCache.Set(CacheKeys.CurrentPlayer, 1);
             this.memoryCache.Set<KMPoint>(CacheKeys.PreviousNode, null);
             this.memoryCache.Set(CacheKeys.BoardDimension, 4);
-            this.memoryCache.Set(CacheKeys.EnforceSize, false);
+            this.memoryCache.Set(CacheKeys.EnforceSize, true);
 
             return new KMResponse
             {
