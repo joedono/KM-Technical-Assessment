@@ -334,7 +334,7 @@
             var xCheck = start.x + xDirection;
             var yCheck = start.y + yDirection;
 
-            while(xCheck != end.x || yCheck != end.y)
+            while (xCheck != end.x || yCheck != end.y)
             {
                 path.Add(new KMPoint(xCheck, yCheck));
                 xCheck += xDirection;
