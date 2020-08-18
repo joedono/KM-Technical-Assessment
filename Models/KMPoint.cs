@@ -2,6 +2,9 @@
 {
     using System;
 
+    /// <summary>
+    /// A node on the board
+    /// </summary>
     public class KMPoint
     {
         public int x { get; set; }

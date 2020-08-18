@@ -28,6 +28,10 @@
 
         #region Actions
 
+        /// <summary>
+        /// Endpoint to initialize the board
+        /// </summary>
+        /// <returns>Initialization success message</returns>
         [HttpGet]
         [Route("initialize")]
         public KMResponse Initialize()
@@ -49,6 +53,14 @@
             };
         }
 
+        /// <summary>
+        /// Endpoint for when a user clicks a point on the board.
+        /// Validates that the move is valid by examining existing board,
+        /// adds the clicked point (and points between it and the previously clicked point) to the board,
+        /// and checks whether there's a winner.
+        /// </summary>
+        /// <param name="point">Point on the board that was clicked</param>
+        /// <returns>Valid, invalid, or game over response</returns>
         [HttpPost]
         [Route("node-clicked")]
         public KMResponse NodeClicked([FromBody] KMPoint point)
@@ -75,6 +87,10 @@
             return response;
         }
 
+        /// <summary>
+        /// Endpoint for the client to report errors.
+        /// </summary>
+        /// <param name="error">Reported error</param>
         [HttpPost]
         [Route("error")]
         public void Error([FromBody] KMError error)
@@ -86,6 +102,11 @@
 
         #region Validation
 
+        /// <summary>
+        /// Validates that the clicked node is a valid move.
+        /// </summary>
+        /// <param name="newNode">The clicked node</param>
+        /// <returns>A <see cref="KMResponse"/> if the choice was invalid, null if the choice was valid</returns>
         private KMResponse Validate(KMPoint newNode)
         {
             var currentNodes = this.memoryCache.Get<KMGameBoard>(CacheKeys.GameBoard);
@@ -202,6 +223,16 @@
 
         #region Helpers
 
+        /// <summary>
+        /// Processes the clicked node.
+        /// If this is the first click, record it as PreviousNode.
+        /// If this is the second click, add it and any nodes on the path
+        /// to PreviousNode to the game board and switch player turns.
+        /// This method assumes that validation has already been run on the clicked node
+        /// and that it is a valid move.
+        /// </summary>
+        /// <param name="clickedNode">The clicked node</param>
+        /// <returns>Either a VALID_START_NODE response or a VALID_END_NODE response.</returns>
         private KMResponse ClickNode(KMPoint clickedNode)
         {
             var currentNodes = this.memoryCache.Get<KMGameBoard>(CacheKeys.GameBoard);
@@ -266,6 +297,11 @@
             }
         }
 
+        /// <summary>
+        /// Saves the current board to memory and changes which player's turn it is
+        /// </summary>
+        /// <param name="board">The current board</param>
+        /// <param name="currentPlayer">The player whose turn just ended</param>
         private void ChangePlayer(KMGameBoard board, int currentPlayer)
         {
             this.memoryCache.Set(CacheKeys.GameBoard, board);
@@ -273,6 +309,16 @@
             this.memoryCache.Set<KMPoint>(CacheKeys.PreviousNode, null);
         }
 
+        /// <summary>
+        /// Returns a list of <see cref="KMPoint"/> representing the nodes between
+        /// previousNode and the clicked node.
+        /// List includes the clicked node but not previousNode, since previousNode
+        /// only needs to be added on the very first move of the game, which is taken care
+        /// of in <see cref="ClickNode(KMPoint)"/>
+        /// </summary>
+        /// <param name="start">The newly clicked node</param>
+        /// <param name="end">The previousNode</param>
+        /// <returns>List of nodes drawing a path between start and end</returns>
         private List<KMPoint> GetNodePath(KMPoint start, KMPoint end)
         {
             var path = new List<KMPoint>();
@@ -300,6 +346,13 @@
             return path;
         }
 
+        /// <summary>
+        /// Checks the win state of the board.
+        /// </summary>
+        /// <returns>
+        /// True if there are no available moves and someone has won.
+        /// False if there are available moves and the game goes on
+        /// </returns>
         private bool CheckWinner()
         {
             var currentNodes = this.memoryCache.Get<KMGameBoard>(CacheKeys.GameBoard);
@@ -317,6 +370,17 @@
             return !hasAvailableMoves;
         }
 
+        /// <summary>
+        /// Checks if a move can be made from a given node.
+        /// A move can be made if there are any nodes immediately
+        /// next to the given node that are not already on the board.
+        /// </summary>
+        /// <param name="point">The node to be checked</param>
+        /// <param name="board">The current game board</param>
+        /// <returns>
+        /// True if there are available moves from the given node.
+        /// Falst if there are no available moves from the given node.
+        /// </returns>
         private bool CheckNode(KMPoint point, KMGameBoard board)
         {
             var boardDimension = this.memoryCache.Get<int>(CacheKeys.BoardDimension);

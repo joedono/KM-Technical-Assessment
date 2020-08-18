@@ -1,5 +1,8 @@
 ﻿namespace KM_Technical_Assessment.Constants
 {
+    /// <summary>
+    /// Keys for values stored in memory
+    /// </summary>
     public class CacheKeys
     {
         public const string GameBoard = "game-board";
