@@ -280,6 +280,11 @@
             var xDirection = Math.Clamp(end.x - start.x, -1, 1);
             var yDirection = Math.Clamp(end.y - start.y, -1, 1);
 
+            if (xDirection == 0 && yDirection == 0)
+            {
+                throw new ArgumentException("Attempted to get path from same node");
+            }
+
             var xCheck = start.x + xDirection;
             var yCheck = start.y + yDirection;
 
