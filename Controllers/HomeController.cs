@@ -277,24 +277,20 @@
         {
             var path = new List<KMPoint>();
 
-            // TODO These directions are wrong. Figure this out.
-            var xDirection = start.x < end.x ? 1 : -1;
-            var yDirection = start.y < end.y ? 1 : -1;
-            KMPoint addPoint;
+            var xDirection = Math.Clamp(end.x - start.x, -1, 1);
+            var yDirection = Math.Clamp(end.y - start.y, -1, 1);
 
-            for (var x = start.x; x < end.x; x += xDirection)
+            var xCheck = start.x + xDirection;
+            var yCheck = start.y + yDirection;
+
+            while(xCheck != end.x && yCheck != end.y)
             {
-                for (var y = start.y; y < end.y; y += yDirection)
-                {
-                    // First loop. We haven't moved on from checking the first node yet
-                    if (x == start.x || y == end.y)
-                    {
-                        continue;
-                    }
-
-                    addPoint = new KMPoint(x, y);
-                }
+                path.Add(new KMPoint(xCheck, yCheck));
+                xCheck += xDirection;
+                yCheck += yDirection;
             }
+
+            path.Add(end);
 
             return path;
         }
