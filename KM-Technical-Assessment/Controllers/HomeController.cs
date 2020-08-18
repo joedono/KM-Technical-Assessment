@@ -34,13 +34,12 @@
         /// <returns>Initialization success message</returns>
         [HttpGet]
         [Route("initialize")]
-        public KMResponse Initialize()
+        public KMResponse Initialize(int boardSize = 4)
         {
             this.memoryCache.Set(CacheKeys.GameBoard, new KMGameBoard());
             this.memoryCache.Set(CacheKeys.CurrentPlayer, 1);
             this.memoryCache.Set<KMPoint>(CacheKeys.PreviousNode, null);
-            this.memoryCache.Set(CacheKeys.BoardDimension, 4);
-            this.memoryCache.Set(CacheKeys.EnforceSize, true);
+            this.memoryCache.Set(CacheKeys.BoardDimension, boardSize);
 
             return new KMResponse
             {
@@ -48,7 +47,7 @@
                 body = new KMResponseBody
                 {
                     heading = "Player 1",
-                    message = "Awaiting Player 1's Move"
+                    message = "Awaiting Player 1's Move."
                 }
             };
         }
@@ -112,13 +111,12 @@
             var currentNodes = this.memoryCache.Get<KMGameBoard>(CacheKeys.GameBoard);
             var currentPlayer = this.memoryCache.Get<int>(CacheKeys.CurrentPlayer);
             var boardDimension = this.memoryCache.Get<int>(CacheKeys.BoardDimension);
-            var enforceSize = this.memoryCache.Get<bool>(CacheKeys.EnforceSize);
             var previousNode = this.memoryCache.Get<KMPoint>(CacheKeys.PreviousNode);
             var playerString = $"Player {currentPlayer}";
             var errorMsg = previousNode == null ? "INVALID_START_NODE" : "INVALID_END_NODE";
 
             // Validate that the point is on the board
-            if (enforceSize && (newNode.x < 0 || newNode.y < 0 || newNode.x >= boardDimension || newNode.y >= boardDimension))
+            if (newNode.x < 0 || newNode.y < 0 || newNode.x >= boardDimension || newNode.y >= boardDimension)
             {
                 return new KMResponse
                 {
@@ -384,7 +382,6 @@
         private bool CheckNode(KMPoint point, KMGameBoard board)
         {
             var boardDimension = this.memoryCache.Get<int>(CacheKeys.BoardDimension);
-            var enforceSize = this.memoryCache.Get<bool>(CacheKeys.EnforceSize);
             var moveAvailable = false;
             KMPoint checkpoint;
 
@@ -399,7 +396,7 @@
                     }
 
                     // Point is off the board towards the bottom or right
-                    if (enforceSize && (x >= boardDimension || y >= boardDimension))
+                    if (x >= boardDimension || y >= boardDimension)
                     {
                         continue;
                     }

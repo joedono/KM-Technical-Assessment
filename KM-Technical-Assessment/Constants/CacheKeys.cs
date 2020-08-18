@@ -12,7 +12,5 @@
         public const string PreviousNode = "previous-node";
 
         public const string BoardDimension = "board-dimension";
-
-        public const string EnforceSize = "enforce-size";
     }
 }
