@@ -2,114 +2,16 @@
 
 https://technical-assessment.konicaminoltamarketplace.com/
 
-## Game Rules
-* The game is played on a 4x4 grid of 16 nodes.
-* Players take turns drawing octilinear lines connecting nodes.
-* Each line must begin at the start or end of the existing path, so that all lines form a continuous path.
-* The first line may begin on any node.
-* A line may connect any number of nodes.
-* Lines may not intersect.
-* No node can be visited twice.
-* The game ends when no valid lines can be drawn.
-* The player who draws the last line is the loser.
+## Summary
+Code is written using .NET Core 3.1 and Microsoft Visual Studio Community 2019.
 
-## Endpoints
+It is a rather standard Web API project with a HomeController handling all the endpoints, validation, game logic, and tracking moves across the board, and several model classes to handle request and response data. The application uses a MemoryCache class to store game data directly from within HomeController.
 
-### GET /initialize
+## Running the API
+The project can be run on your standard IIS Express instance that is bundled with Visual Studio. It will use the `Http` API model from the client.
 
-#### No Request Body
+The project is also hosted on Heroku at https://km-technical-assessment.herokuapp.com, and can be connected to there. The barest minimum of routing is used. For instance, the call to initialize is:
+    https://km-technical-assessment.herokuapp.com/initialize
 
-#### Expected Response
-
-    {
-        "msg": "INITIALIZE",
-        "body": {
-            "newLine": null,
-            "heading": "Player 1",
-            "message": "Awaiting Player 1's Move"
-        }
-    }
-
-### POST /node-clicked
-
-#### Request Body
-The request will be a `POINT` object with the x and y indicies for the point the user clicked on.
-
-
-    {
-        "x": 0,
-        "y": 2
-    }
-
-#### Expected Responses
-
-    {
-        "msg": "VALID_START_NODE",
-        "body": {
-            "newLine": null,
-            "heading": "Player 2",
-            "message": "Select a second node to complete the line."
-        }
-    }
-
-    {
-        "msg": "INVALID_START_NODE",
-        "body": {
-            "newLine": null,
-            "heading": "Player 2",
-            "message": "Not a valid starting position."
-        }
-    }
-
-    {
-        "msg": "VALID_END_NODE",
-        "body": {
-            "newLine": {
-                "start": {
-                    "x": 0,
-                    "y": 0
-                },
-                "end": {
-                    "x": 0,
-                    "y": 2
-                }
-            },
-            "heading": "Player 1",
-            "message": null
-        }
-    }
-
-    {
-        "msg": "INVALID_END_NODE",
-        "body": {
-            "newLine": null,
-            "heading": "Player 2",
-            "message": "Invalid move!"
-        }
-    }
-
-    {
-        "msg": "GAME_OVER",
-        "body": {
-            "newLine": {
-                "start": {
-                    "x": 0,
-                    "y": 0
-                },
-                "end": {
-                    "x": 0,
-                    "y": 2
-                }
-            },
-            "heading": "Game Over",
-            "message": "Player 2 Wins!"
-        }
-    }
-
-### POST /error
-This is a general mechanism for the Client to report errors. The request is solely intended to aid debugging, and the Client ignores any response.
-
-#### Request Body
-    {
-        "error": "Invalid type for `id`: Expected INT but got a STRING"
-    }
+And the call for `/node-clicked` is simply:
+    https://km-technical-assessment.herokuapp.com/node-clicked
