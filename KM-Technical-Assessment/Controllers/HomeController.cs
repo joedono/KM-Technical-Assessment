@@ -130,7 +130,7 @@
                 // Picking first node
                 if (currentNodes.nodes.Any())
                 {
-                    if (!newNode.Equals(currentNodes.nodes[0]) && !newNode.Equals(currentNodes.nodes[currentNodes.nodes.Count - 1]))
+                    if (!newNode.Equals(currentNodes.nodes.First()) && !newNode.Equals(currentNodes.nodes.Last()))
                     {
                         // New node is not the first or last node in the path
                         return new KMResponse

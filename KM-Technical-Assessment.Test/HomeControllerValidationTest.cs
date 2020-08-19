@@ -5,6 +5,7 @@
     using KM_Technical_Assessment.Services;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
+    using System.Collections.Generic;
 
     [TestClass]
     public class HomeControllerValidationTest
@@ -25,10 +26,10 @@
             this.service = new Mock<IGameBoardService>();
             this.controller = new HomeController(this.service.Object);
 
-            this.service.Setup(m => m.GetGameBoard()).Returns(() => new KMGameBoard());
-            this.service.Setup(m => m.GetBoardDimension()).Returns(() => 4);
-            this.service.Setup(m => m.GetCurrentPlayer()).Returns(() => 1);
-            this.service.Setup(m => m.GetPreviousNode()).Returns(() => null);
+            this.service.Setup(m => m.GetGameBoard()).Returns(new KMGameBoard());
+            this.service.Setup(m => m.GetBoardDimension()).Returns(4);
+            this.service.Setup(m => m.GetCurrentPlayer()).Returns(1);
+            this.service.Setup(m => m.GetPreviousNode()).Returns<KMPoint>(null);
         }
 
         #endregion
@@ -40,7 +41,59 @@
         {
             var node = new KMPoint(-1, -1);
             var response = this.controller.NodeClicked(node);
+
             Assert.AreEqual("INVALID_START_NODE", response.msg);
+            Assert.AreEqual("Not a valid position.", response.body.message);
+            this.service.Verify(m => m.SetGameBoard(It.IsAny<KMGameBoard>()), Times.Never);
+        }
+
+        [TestMethod]
+        public void INVALID_FirstMove_ClickInsideOfPath()
+        {
+            var node = new KMPoint(0, 2);
+            var nodes = new List<KMPoint>
+            {
+                new KMPoint(0, 1),
+                new KMPoint(0, 2),
+                new KMPoint(1, 2),
+            };
+
+            var gameBoard = new KMGameBoard
+            {
+                nodes = nodes
+            };
+
+            this.service.Setup(m => m.GetGameBoard()).Returns(gameBoard);
+
+            var response = this.controller.NodeClicked(node);
+
+            Assert.AreEqual("INVALID_START_NODE", response.msg);
+            Assert.AreEqual("You must start on either end of the path.", response.body.message);
+            this.service.Verify(m => m.SetGameBoard(It.IsAny<KMGameBoard>()), Times.Never);
+        }
+
+        [TestMethod]
+        public void INVALID_FirstMove_ClickOutsideOfPath()
+        {
+            var node = new KMPoint(3, 3);
+            var nodes = new List<KMPoint>
+            {
+                new KMPoint(0, 1),
+                new KMPoint(0, 2),
+                new KMPoint(1, 2),
+            };
+
+            var gameBoard = new KMGameBoard
+            {
+                nodes = nodes
+            };
+
+            this.service.Setup(m => m.GetGameBoard()).Returns(gameBoard);
+
+            var response = this.controller.NodeClicked(node);
+
+            Assert.AreEqual("INVALID_START_NODE", response.msg);
+            Assert.AreEqual("You must start on either end of the path.", response.body.message);
             this.service.Verify(m => m.SetGameBoard(It.IsAny<KMGameBoard>()), Times.Never);
         }
 
