@@ -2,6 +2,7 @@
 {
     using KM_Technical_Assessment.Constants;
     using KM_Technical_Assessment.Models;
+    using KM_Technical_Assessment.Services;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.Extensions.Caching.Memory;
     using System;
@@ -13,15 +14,15 @@
     {
         #region Fields
 
-        private IMemoryCache memoryCache;
+        private IGameBoardService gameBoardService;
 
         #endregion
 
         #region Constructor
 
-        public HomeController(IMemoryCache memoryCache)
+        public HomeController(IGameBoardService gameBoardService)
         {
-            this.memoryCache = memoryCache;
+            this.gameBoardService = gameBoardService;
         }
 
         #endregion
@@ -36,10 +37,7 @@
         [Route("initialize")]
         public KMResponse Initialize(int boardSize = 4)
         {
-            this.memoryCache.Set(CacheKeys.GameBoard, new KMGameBoard());
-            this.memoryCache.Set(CacheKeys.CurrentPlayer, 1);
-            this.memoryCache.Set<KMPoint>(CacheKeys.PreviousNode, null);
-            this.memoryCache.Set(CacheKeys.BoardDimension, boardSize);
+            this.gameBoardService.Initialize(boardSize);
 
             return new KMResponse
             {
@@ -68,7 +66,7 @@
 
             if (valid != null)
             {
-                this.memoryCache.Set<KMPoint>(CacheKeys.PreviousNode, null);
+                this.gameBoardService.SetPreviousNode(null);
                 return valid;
             }
 
@@ -76,7 +74,7 @@
 
             if (this.CheckWinner())
             {
-                var currentPlayer = this.memoryCache.Get<int>(CacheKeys.CurrentPlayer);
+                var currentPlayer = this.gameBoardService.GetCurrentPlayer();
 
                 response.msg = "GAME_OVER";
                 response.body.heading = "Game Over";
@@ -108,10 +106,10 @@
         /// <returns>A <see cref="KMResponse"/> if the choice was invalid, null if the choice was valid</returns>
         private KMResponse Validate(KMPoint newNode)
         {
-            var currentNodes = this.memoryCache.Get<KMGameBoard>(CacheKeys.GameBoard);
-            var currentPlayer = this.memoryCache.Get<int>(CacheKeys.CurrentPlayer);
-            var boardDimension = this.memoryCache.Get<int>(CacheKeys.BoardDimension);
-            var previousNode = this.memoryCache.Get<KMPoint>(CacheKeys.PreviousNode);
+            var currentNodes = this.gameBoardService.GetGameBoard();
+            var currentPlayer = this.gameBoardService.GetCurrentPlayer();
+            var boardDimension = this.gameBoardService.GetBoardDimension();
+            var previousNode = this.gameBoardService.GetPreviousNode();
             var playerString = $"Player {currentPlayer}";
             var errorMsg = previousNode == null ? "INVALID_START_NODE" : "INVALID_END_NODE";
 
@@ -233,16 +231,16 @@
         /// <returns>Either a VALID_START_NODE response or a VALID_END_NODE response.</returns>
         private KMResponse ClickNode(KMPoint clickedNode)
         {
-            var currentNodes = this.memoryCache.Get<KMGameBoard>(CacheKeys.GameBoard);
-            var currentPlayer = this.memoryCache.Get<int>(CacheKeys.CurrentPlayer);
-            var previousNode = this.memoryCache.Get<KMPoint>(CacheKeys.PreviousNode);
+            var currentNodes = this.gameBoardService.GetGameBoard();
+            var currentPlayer = this.gameBoardService.GetCurrentPlayer();
+            var previousNode = this.gameBoardService.GetPreviousNode();
             var playerString = $"Player {currentPlayer}";
             var nextPlayerString = $"Player {(currentPlayer == 1 ? 2 : 1)}";
 
             if (previousNode == null)
             {
                 // First click
-                this.memoryCache.Set(CacheKeys.PreviousNode, clickedNode);
+                this.gameBoardService.SetPreviousNode(clickedNode);
                 return new KMResponse
                 {
                     msg = "VALID_START_NODE",
@@ -302,9 +300,9 @@
         /// <param name="currentPlayer">The player whose turn just ended</param>
         private void ChangePlayer(KMGameBoard board, int currentPlayer)
         {
-            this.memoryCache.Set(CacheKeys.GameBoard, board);
-            this.memoryCache.Set(CacheKeys.CurrentPlayer, currentPlayer == 1 ? 2 : 1);
-            this.memoryCache.Set<KMPoint>(CacheKeys.PreviousNode, null);
+            this.gameBoardService.SetGameBoard(board);
+            this.gameBoardService.SetCurrentPlayer(currentPlayer == 1 ? 2 : 1);
+            this.gameBoardService.SetPreviousNode(null);
         }
 
         /// <summary>
@@ -353,7 +351,7 @@
         /// </returns>
         private bool CheckWinner()
         {
-            var currentNodes = this.memoryCache.Get<KMGameBoard>(CacheKeys.GameBoard);
+            var currentNodes = this.gameBoardService.GetGameBoard();
 
             if (!currentNodes.nodes.Any())
             {
@@ -381,7 +379,7 @@
         /// </returns>
         private bool CheckNode(KMPoint point, KMGameBoard board)
         {
-            var boardDimension = this.memoryCache.Get<int>(CacheKeys.BoardDimension);
+            var boardDimension = this.gameBoardService.GetBoardDimension();
             var moveAvailable = false;
             KMPoint checkpoint;
 

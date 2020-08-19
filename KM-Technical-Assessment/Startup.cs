@@ -1,5 +1,6 @@
 namespace KM_Technical_Assessment
 {
+    using KM_Technical_Assessment.Services;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.Configuration;
@@ -19,6 +20,7 @@ namespace KM_Technical_Assessment
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMemoryCache();
+            services.AddSingleton<IGameBoardService, GameBoardService>();
             services.AddCors();
             services.AddControllers();
         }
