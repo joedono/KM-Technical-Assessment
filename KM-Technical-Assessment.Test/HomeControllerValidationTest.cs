@@ -55,7 +55,7 @@
             {
                 new KMPoint(0, 1),
                 new KMPoint(0, 2),
-                new KMPoint(1, 2),
+                new KMPoint(1, 2)
             };
 
             var gameBoard = new KMGameBoard
@@ -80,7 +80,7 @@
             {
                 new KMPoint(0, 1),
                 new KMPoint(0, 2),
-                new KMPoint(1, 2),
+                new KMPoint(1, 2)
             };
 
             var gameBoard = new KMGameBoard
@@ -94,6 +94,35 @@
 
             Assert.AreEqual("INVALID_START_NODE", response.msg);
             Assert.AreEqual("You must start on either end of the path.", response.body.message);
+            this.service.Verify(m => m.SetGameBoard(It.IsAny<KMGameBoard>()), Times.Never);
+        }
+
+        [TestMethod]
+        public void INVALID_SecondMove_CrossPath()
+        {
+            var node = new KMPoint(1, 1);
+            var nodes = new List<KMPoint>
+            {
+                new KMPoint(0, 1),
+                new KMPoint(0, 2),
+                new KMPoint(1, 2),
+                new KMPoint(2, 2),
+                new KMPoint(2, 3),
+                new KMPoint(1, 3)
+            };
+
+            var gameBoard = new KMGameBoard
+            {
+                nodes = nodes
+            };
+
+            this.service.Setup(m => m.GetGameBoard()).Returns(gameBoard);
+            this.service.Setup(m => m.GetPreviousNode()).Returns(new KMPoint(1, 3));
+
+            var response = this.controller.NodeClicked(node);
+
+            Assert.AreEqual("INVALID_END_NODE", response.msg);
+            Assert.AreEqual("Invalid move. You cannot cross the path.", response.body.message);
             this.service.Verify(m => m.SetGameBoard(It.IsAny<KMGameBoard>()), Times.Never);
         }
 
