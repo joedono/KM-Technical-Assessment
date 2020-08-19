@@ -162,7 +162,7 @@
                         body = new KMResponseBody
                         {
                             heading = playerString,
-                            message = "Invalid move."
+                            message = "Invalid move. You cannot add a node to the path that is already on it."
                         }
                     };
                 }
@@ -179,7 +179,7 @@
                         body = new KMResponseBody
                         {
                             heading = playerString,
-                            message = "Invalid move."
+                            message = "Invalid move. Line cannot be drawn between selected nodes."
                         }
                     };
                 }
@@ -202,7 +202,7 @@
                                 body = new KMResponseBody
                                 {
                                     heading = playerString,
-                                    message = "Invalid move."
+                                    message = "Invalid move. You cannot cross the path."
                                 }
                             };
                         }
