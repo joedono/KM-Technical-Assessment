@@ -1,7 +1,8 @@
 ﻿namespace KM_Technical_Assessment.Test
 {
     using KM_Technical_Assessment.Controllers;
-    using Microsoft.Extensions.Caching.Memory;
+    using KM_Technical_Assessment.Models;
+    using KM_Technical_Assessment.Services;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using Moq;
 
@@ -12,7 +13,7 @@
 
         private HomeController controller;
 
-        private Mock<IMemoryCache> memoryCache;
+        private Mock<IGameBoardService> service;
 
         #endregion
 
@@ -21,8 +22,13 @@
         [TestInitialize]
         public void Initialize()
         {
-            this.memoryCache = new Mock<IMemoryCache>();
-            this.controller = new HomeController(this.memoryCache.Object);
+            this.service = new Mock<IGameBoardService>();
+            this.controller = new HomeController(this.service.Object);
+
+            this.service.Setup(m => m.GetGameBoard()).Returns(() => new KMGameBoard());
+            this.service.Setup(m => m.GetBoardDimension()).Returns(() => 4);
+            this.service.Setup(m => m.GetCurrentPlayer()).Returns(() => 1);
+            this.service.Setup(m => m.GetPreviousNode()).Returns(() => null);
         }
 
         #endregion

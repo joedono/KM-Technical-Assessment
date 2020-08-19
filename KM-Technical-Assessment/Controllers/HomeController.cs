@@ -1,10 +1,8 @@
 ﻿namespace KM_Technical_Assessment.Controllers
 {
-    using KM_Technical_Assessment.Constants;
     using KM_Technical_Assessment.Models;
     using KM_Technical_Assessment.Services;
     using Microsoft.AspNetCore.Mvc;
-    using Microsoft.Extensions.Caching.Memory;
     using System;
     using System.Collections.Generic;
     using System.Linq;
